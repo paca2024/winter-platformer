@@ -4,8 +4,10 @@ class Game {
         this.ctx = this.canvas.getContext('2d');
         
         // Set canvas size
-        this.canvas.width = 800;
-        this.canvas.height = 400;
+        this.resizeCanvas();
+        
+        // Add resize listener
+        window.addEventListener('resize', () => this.resizeCanvas());
         
         // Game state
         this.score = 0;
@@ -65,6 +67,29 @@ class Game {
         this.startGame();
     }
     
+    resizeCanvas() {
+        const container = document.getElementById('game-container');
+        const containerWidth = container.clientWidth;
+        const containerHeight = window.innerHeight;
+        const aspectRatio = 800 / 400; // Original aspect ratio
+        
+        let width = containerWidth;
+        let height = width / aspectRatio;
+        
+        // If height is too big, constrain by height instead
+        if (height > containerHeight) {
+            height = containerHeight;
+            width = height * aspectRatio;
+        }
+        
+        this.canvas.width = 800; // Keep internal resolution
+        this.canvas.height = 400;
+        
+        // Set display size
+        this.canvas.style.width = `${width}px`;
+        this.canvas.style.height = `${height}px`;
+    }
+    
     generatePlatforms() {
         // Ensure there are always enough platforms ahead
         while (this.platforms.length < 5) {
@@ -112,19 +137,42 @@ class Game {
                 return;
             }
             
-            if (e.key === 'ArrowUp' || e.key === ' ') {
-                if (!this.player.isJumping) {
-                    this.player.velocityY = this.player.jumpForce;
-                    this.player.isJumping = true;
-                    this.player.canDoubleJump = true;
-                } else if (this.player.canDoubleJump) {
-                    this.player.velocityY = this.player.doubleJumpForce;
-                    this.player.canDoubleJump = false;
-                }
+            if ((e.key === 'ArrowUp' || e.key === ' ') && !this.player.isJumping) {
+                this.jump();
             }
         };
         
+        // Keyboard controls
         document.addEventListener('keydown', jumpHandler);
+        
+        // Touch controls
+        const jumpButton = document.getElementById('jumpButton');
+        
+        // Touch events for jump button
+        jumpButton.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!this.gameOver) {
+                this.jump();
+            }
+        });
+        
+        // Handle touch anywhere on screen for restart
+        document.addEventListener('touchstart', (e) => {
+            if (this.gameOver) {
+                this.resetGame();
+            }
+        });
+    }
+    
+    jump() {
+        if (!this.player.isJumping) {
+            this.player.velocityY = this.player.jumpForce;
+            this.player.isJumping = true;
+            this.player.canDoubleJump = true;
+        } else if (this.player.canDoubleJump) {
+            this.player.velocityY = this.player.doubleJumpForce;
+            this.player.canDoubleJump = false;
+        }
     }
     
     resetGame() {

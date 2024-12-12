@@ -1,3 +1,12 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -6,9 +15,65 @@ body {
     align-items: center;
     min-height: 100vh;
     background-color: #2c3e50;
+    touch-action: none;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 #gameCanvas {
+    width: 100%;
+    height: 100%;
     border: 2px solid #34495e;
     background-color: #141c26;
+    display: block;
+}
+
+#mobile-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: none; /* Hidden by default, shown on mobile */
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    z-index: 1000;
+}
+
+#jumpButton {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#jumpButton:active {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile-specific styles */
+@media (max-width: 800px) {
+    body {
+        align-items: flex-start;
+    }
+    
+    #game-container {
+        height: 100vh;
+    }
+    
+    #mobile-controls {
+        display: flex;
+    }
 }
